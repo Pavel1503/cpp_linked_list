@@ -1,0 +1,89 @@
+#include "LinkedList.h"
+
+template <class T> 
+LinkedList<T>::LinkedList() 
+{
+	m_head = nullptr;
+}
+/*
+ * Add element reference
+ */
+template <class T>
+void LinkedList	<T>::add(T* to_add)
+{
+	m_size++;
+	if (m_size == 1) //special case
+	{
+		m_head = new wrapped_object;
+		m_head->element = to_add;
+		m_head->next_element = nullptr;
+		return;
+	}
+	//not first = set a new wrapped_object element reference [annonymus]
+	wrapped_object* head = m_head;
+	m_head = new wrapped_object;
+	m_head->next_element = head;
+	m_head->element = to_add;
+}
+
+template <class T>
+void LinkedList<T>::remove(T* to_remove)
+{
+	//this is not the first but we dont know if it exists...
+	wrapped_object* next = m_head;
+	//find the pointer to the element
+	while (next != nullptr)
+	{
+		if (next->next_element->element == to_remove) //we must delete the next element
+		{
+			wrapped_object* temp = next->next_element; //next reference to temp - we will remove it
+			next->next_element = temp->next_element; //just take the next after the next [null is okay too]
+			delete temp->element; //delete the class T
+			delete temp; //delete the wrapper
+			m_size--; //reduce size
+			return;
+		}
+		next = next->next_element; //next element
+	}
+	//got to the end and no such luck - nothing to remove - should I handle this error? or ignore?
+}
+
+template <class T>
+T* LinkedList<T>::get_next()
+{
+	if (m_iterator == nullptr)
+	{
+		m_iterator = m_head;
+	}
+	else
+	{
+		m_iterator = m_iterator->next_element;
+	}
+	return m_iterator == nullptr ? nullptr : m_iterator->element;
+}
+
+template <class T>
+void LinkedList<T>::reset_iterator()
+{
+	m_iterator = nullptr;
+}
+
+template <class T>
+int LinkedList<T>::size()
+{
+	return m_size;
+}
+
+template <class T> 
+LinkedList<T>::~LinkedList()
+{
+	//jump the pointers and delete the elements
+	wrapped_object* next = m_head;
+	while (next != nullptr)
+	{
+		wrapped_object* temp = next->next_element;
+		delete next;
+		next = temp;
+	}
+}
+
