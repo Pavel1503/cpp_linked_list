@@ -11,16 +11,8 @@ LinkedList<T>::LinkedList()
 template <class T>
 void LinkedList	<T>::add(T* to_add)
 {
-	m_size++;
-	if (m_size == 1) //special case
-	{
-		m_head = new wrapped_object;
-		m_head->element = to_add;
-		m_head->next_element = nullptr;
-		return;
-	}
-	//not first = set a new wrapped_object element reference [annonymus]
-	wrapped_object* head = m_head;
+	m_size++; //increase size
+	wrapped_object* head = m_head; //if its the first m_head is nullptr anyhow
 	m_head = new wrapped_object;
 	m_head->next_element = head;
 	m_head->element = to_add;
@@ -29,6 +21,17 @@ void LinkedList	<T>::add(T* to_add)
 template <class T>
 void LinkedList<T>::remove(T* to_remove)
 {
+	//check if its the first element
+	if (m_head->element == to_remove)
+	{
+		//remove and return
+		wrapped_object* temp = m_head->next_element; //save next element
+		delete m_head->element; //delete the class T
+		delete m_head; //delete the wrapper
+		m_head = temp; //change m_head
+		m_size--; //reduce size
+		return;
+	}
 	//this is not the first but we dont know if it exists...
 	wrapped_object* next = m_head;
 	//find the pointer to the element
